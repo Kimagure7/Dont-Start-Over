@@ -1,0 +1,39 @@
+model:
+  path: Llama-3.2-3B-Instruct
+  soft_prompt_path: outputs/MIND/Llama-3.2-1B-Instruct/checkpoint_model_best.pth
+  prompt_path: prompts/mind_title.txt
+  freeze_lora: True
+  freeze_predictor: false # 是否冻结rating predictor
+  max_txt_len: 256
+  dropout: 0.1
+  ckpt: 
+  use_item_embedding: False # True: use item embedding, False: use item title
+  ffn_matrix: # datasets/activation_matrix_mind.pt # ffn activation matrix
+  loss_file: # use if user select method is kmeans+loss, you need to specify the loss file
+
+dataset:
+  name: MIND
+  train: datasets/MIND/train_sampled_50k.tsv
+  valid: datasets/MIND/valid_sampled_50k.tsv
+  user_dict: datasets/MIND/user_dict_mind.pickle
+  train_ratio: 50000 
+  mode: 0 
+
+run:
+  seed: 42
+  kmeans_seed: 42 
+  evaluate: False # False: training, True: only evaluation 
+  output_dir: outputs
+  device: cuda
+  init_lr: 1e-4
+  per_device_train_batch_size: 32
+  per_device_eval_batch_size: 32
+  max_epoch: 4
+  resume_ckpt_path: null
+  min_epoch: 1
+  norm_lambda: 0.2 
+  dataset_type: 'user' 
+  lr_scheduler: cosine #"linear", "cosine", "cosine_with_restarts", "polynomial", "constant", "constant_with_warmup"
+  num_warmup_steps: 0
+  gradient_accumulation_steps: 1
+  comment: 

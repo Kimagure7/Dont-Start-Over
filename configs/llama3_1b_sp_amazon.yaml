@@ -1,0 +1,29 @@
+model:
+  path: Llama-3.2-3B-Instruct
+  prompt_path: prompts/amazon_title.txt
+  freeze_lora: True
+  max_txt_len: 256
+  ckpt:
+  use_item_embedding: False # True: use item embedding, False: use item title
+
+dataset:
+  name: MoviesAndTV
+  train: datasets/MoviesAndTV/train_data_30k.csv
+  valid: datasets/MoviesAndTV/valid_data_30k.csv
+  user_dict: datasets/MoviesAndTV/user_dict_30k.pickle
+
+run:
+  seed: 42
+  evaluate: True # False: training, True: only evaluation 
+  output_dir: outputs
+  device: cuda
+  init_lr: 5e-4
+  per_device_train_batch_size: 42
+  per_device_eval_batch_size: 16
+  max_epoch: 15
+  norm_lambda: 0.2
+  resume_ckpt_path: null
+  min_epoch: 8
+  lr_scheduler: cosine #"linear", "cosine", "cosine_with_restarts", "polynomial", "constant", "constant_with_warmup"
+  num_warmup_steps: 0
+  gradient_accumulation_steps: 1
