@@ -189,7 +189,7 @@ deepspeed --num_gpus 4 train_ad.py \
 
 ---
 
-### Stage 2 (Variant) — Privacy-Aware Adapter Training
+### Stage 2 (Variant) — Parallel source Adapter Training
 
 ```bash
 deepspeed --num_gpus 4 train_paad.py \
