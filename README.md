@@ -1,6 +1,6 @@
-# Don't Start Over: Recycling User Soft Prompts Across LLMs for Recommendation
+# Don’t Start Over: A Cost-Effective Framework for Migrating Personalized Prompts Between LLMs
 
-> The official implementation of the paper **"Don't Start Over: Recycling User Soft Prompts Across LLMs for Recommendation"**.
+> The official implementation of the paper **"Don’t Start Over: A Cost-Effective Framework for Migrating Personalized Prompts Between LLMs"**.
 
 ## Overview
 
