@@ -85,9 +85,10 @@ print(f"After activity filtering: {len(df):,} interactions, {df['user_id'].nuniq
 
 # ── Cap each user at 85 most-recent interactions ─────────────────────────────
 df = (
-    df.groupby('user_id', group_keys=False)
-    .apply(lambda x: x.nlargest(85, 'timestamp') if len(x) > 85 else x)
-    .reset_index(drop=True)
+    df.sort_values(['user_id', 'timestamp'], ascending=[True, False])
+      .groupby('user_id', as_index=False)
+      .head(85)
+      .reset_index(drop=True)
 )
 df = df.rename(columns={'user_id': 'user', 'parent_asin': 'ItemID'})
 

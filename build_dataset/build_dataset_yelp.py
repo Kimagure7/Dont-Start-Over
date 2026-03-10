@@ -104,8 +104,11 @@ print(f"After activity filtering: {len(reviews_filtered):,} reviews, "
 # ── Cap each user at 75 most-recent reviews ──────────────────────────────────
 reviews_filtered['date'] = pd.to_datetime(reviews_filtered['date'])
 df = (
-    reviews_filtered.groupby('user_id', group_keys=False)
-    .apply(lambda x: x.sort_values('date').tail(75) if len(x) > 75 else x)
+    reviews_filtered
+    .sort_values(['user_id', 'date'], ascending=[True, False])
+    .groupby('user_id', as_index=False)
+    .head(75)
+    .sort_values(['user_id', 'date'], ascending=[True, True])
     .reset_index(drop=True)
 )
 
