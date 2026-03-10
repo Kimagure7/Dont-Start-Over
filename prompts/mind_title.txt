@@ -1,0 +1,1 @@
+#Question: A user has interacted with the following news headlines: <ItemTitleList>. Additionally, we have information about the user’s preferences encoded in the feature <UserID>. Using all available information, make a prediction about whether the user would enjoy the news with title <ItemTitle> ? Answer with "Yes" or "No". \n#Answer:
