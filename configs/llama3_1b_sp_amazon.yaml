@@ -14,7 +14,7 @@ dataset:
 
 run:
   seed: 42
-  evaluate: True # False: training, True: only evaluation 
+  evaluate: False # False: training, True: only evaluation 
   output_dir: outputs
   device: cuda
   init_lr: 5e-4

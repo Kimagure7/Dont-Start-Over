@@ -21,7 +21,7 @@ def parse_args():
     parser = argparse.ArgumentParser(
         description='train soft prompt for rating prediction')
 
-    parser.add_argument("--cfg-path", default='configs/ad_llama3_amazon_test.yaml',
+    parser.add_argument("--cfg-path", default='configs/ad_llama3_amazon.yaml',
                         help="path to configuration file.")
     parser.add_argument("--local_rank", type=int, default=-1,
                         help="local rank for distributed training")

@@ -21,7 +21,7 @@ def parse_args():
     parser = argparse.ArgumentParser(
         description='train soft prompt')
 
-    parser.add_argument("--cfg-path", default='configs/llama3_sp_amazon.yaml',
+    parser.add_argument("--cfg-path", default='configs/llama3_1b_sp_amazon.yaml',
                         help="path to configuration file.")
     parser.add_argument("--local_rank", type=int, default=-1,
                         help="local rank for distributed training")
