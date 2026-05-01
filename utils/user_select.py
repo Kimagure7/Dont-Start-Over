@@ -4,6 +4,7 @@ import logging
 import numpy as np
 import pandas as pd
 from sklearn.cluster import KMeans
+from sklearn.decomposition import PCA
 from collections import Counter, defaultdict
 import torch
 import random
@@ -1458,5 +1459,41 @@ def ON_based_cluster_and_loss_sampling(
         f"Selected {len(selected_users)} users from {num_clusters} ON-based clusters "
         f"with loss-based normal sampling. Distribution: {selected_clusters}"
     )
-    
+
+    return selected_users
+
+def select_users_with_pca_kmeans(
+    embedding_path: str,
+    num_users_to_select: int = 2000,
+    num_clusters: int = 15,
+    n_components: int = 256,
+    random_state: int = 42,
+) -> List[int]:
+    sp_path = torch.load(embedding_path, map_location='cpu', weights_only=True)
+    user_embeddings = sp_path['user_embedding']['weight'].numpy()
+
+    logging.info(f"PCA: reducing to {n_components} dimensions")
+    pca_final = PCA(n_components=n_components, random_state=random_state)
+    embeddings_pca = pca_final.fit_transform(user_embeddings)
+
+    kmeans = KMeans(n_clusters=num_clusters, random_state=random_state)
+    labels = kmeans.fit_predict(embeddings_pca)
+
+    cluster_counts = np.bincount(labels)
+    logging.info(f"PCA+KMeans cluster sizes: {cluster_counts}")
+
+    total_users = len(user_embeddings)
+    samples_per_cluster = np.round(cluster_counts / total_users * num_users_to_select).astype(int)
+    diff = num_users_to_select - samples_per_cluster.sum()
+    samples_per_cluster[np.argmax(cluster_counts)] += diff
+
+    selected_users = []
+    for cluster_id in range(num_clusters):
+        cluster_indices = np.where(labels == cluster_id)[0]
+        n_samples = min(samples_per_cluster[cluster_id], len(cluster_indices))
+        if n_samples > 0:
+            sampled = random.sample(cluster_indices.tolist(), k=int(n_samples))
+            selected_users.extend(sampled)
+
+    logging.info(f"Selected {len(selected_users)} users using PCA+KMeans stratified sampling")
     return selected_users

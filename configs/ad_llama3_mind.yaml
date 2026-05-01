@@ -8,16 +8,16 @@ model:
   dropout: 0.1
   ckpt: 
   use_item_embedding: False # True: use item embedding, False: use item title
-  ffn_matrix: # datasets/activation_matrix_mind.pt # ffn activation matrix
-  loss_file: # use if user select method is kmeans+loss, you need to specify the loss file
+  ffn_matrix: # datasets/MIND/activation_matrix.pt # required for mode 4/5/6, generate with generate_ffn_matrix.py
+  loss_file: # outputs/MIND/Llama-3.2-1B-Instruct-<timestamp>/user_losses.json # required for mode 5/7/8
 
 dataset:
   name: MIND
   train: datasets/MIND/train_sampled_50k.tsv
   valid: datasets/MIND/valid_sampled_50k.tsv
   user_dict: datasets/MIND/user_dict_mind.pickle
-  train_ratio: 50000 
-  mode: 0 
+  train_ratio: 50000
+  mode: 0 # user selection strategy: 0=random, 1=variance bucketing, 2=kmeans+variance(uniform), 3=kmeans+variance(gaussian)/PUMA, 4=FFN kmeans, 5=FFN+loss, 6=FFN+variance, 7=loss bucketing, 8=kmeans+loss, 9=kmeans+fps, 10=pca+kmeans
 
 run:
   seed: 42

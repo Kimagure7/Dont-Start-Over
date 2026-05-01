@@ -8,20 +8,21 @@ model:
   dropout: 0.1
   ckpt: 
   use_item_embedding: False # True: use item embedding, False: use item title
-  ffn_matrix: 
-  loss_file: 
+  ffn_matrix: # datasets/Yelp/activation_matrix.pt # required for mode 4/5/6, generate with generate_ffn_matrix.py
+  loss_file: # outputs/Yelp/Llama-3.2-1B-Instruct-<timestamp>/user_losses.json # required for mode 5/7/8
 
 dataset:
   name: Yelp
   train: datasets/Yelp/train_reviews_32k.csv
   valid: datasets/Yelp/valid_reviews_32k.csv
   user_dict: datasets/Yelp/user_dict.pickle
-  train_ratio: 32850 
-  mode: 0
+  train_ratio: 32850
+  mode: 0 # user selection strategy: 0=random, 1=variance bucketing, 2=kmeans+variance(uniform), 3=kmeans+variance(gaussian)/PUMA, 4=FFN kmeans, 5=FFN+loss, 6=FFN+variance, 7=loss bucketing, 8=kmeans+loss, 9=kmeans+fps, 10=pca+kmeans
 
 
 run:
   seed: 42
+  kmeans_seed: 42
   evaluate: False # False: training, True: only evaluation 
   output_dir: outputs
   device: cuda

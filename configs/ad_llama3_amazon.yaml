@@ -1,7 +1,7 @@
 model:
   path: Phi-3-mini-4k-instruct
   soft_prompt_path: outputs/MoviesAndTV/Llama-3.2-3B-Instruct/checkpoint_model_best.pth
-  soft_prompt_path_2: # outputs/MoviesAndTV/Qwen2.5-3B-Instruct/checkpoint_model_best.pth 
+  soft_prompt_path_2: # outputs/MoviesAndTV/Qwen2.5-3B-Instruct/checkpoint_model_best.pth
   # soft_prompt_path_3: # outputs/MoviesAndTV/stablelm-2-1_6b-chat/checkpoint_model_best.pth need to modify code to support three soft prompts
   # soft_prompt_dim: 2048
   prompt_path: prompts/amazon_title.txt
@@ -9,8 +9,10 @@ model:
   freeze_predictor: false # True: freeze predictor, False: train predictor
   max_txt_len: 256
   dropout: 0.1
-  ckpt: 
+  ckpt:
   use_item_embedding: False # True: use item embedding, False: use item title. deprecated
+  ffn_matrix: # datasets/MoviesAndTV/activation_matrix.pt # required for mode 4/5/6, generate with generate_ffn_matrix.py
+  loss_file: # outputs/MoviesAndTV/Llama-3.2-1B-Instruct-<timestamp>/user_losses.json # required for mode 5/7/8
 
 dataset:
   name: MoviesAndTV
@@ -18,11 +20,12 @@ dataset:
   valid: datasets/MoviesAndTV/valid_data_30k.csv
   user_dict: datasets/MoviesAndTV/user_dict_30k.pickle # set null and run once if not exist
   train_ratio: 6000 # user num use for training
-  mode: 0 # user select method for training, 0: random, 3: kmeans+var, change code if you want to use other methods, in datasets.py, get_train_indices
+  mode: 0 # user selection strategy: 0=random, 1=variance bucketing, 2=kmeans+variance(uniform), 3=kmeans+variance(gaussian)/PUMA, 4=FFN kmeans, 5=FFN+loss, 6=FFN+variance, 7=loss bucketing, 8=kmeans+loss, 9=kmeans+fps, 10=pca+kmeans
 
 run:
   seed: 42
-  evaluate: False # False: training, True: only evaluation 
+  kmeans_seed: 42
+  evaluate: False # False: training, True: only evaluation
   output_dir: outputs
   device: cuda
   init_lr: 1e-4

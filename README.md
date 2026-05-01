@@ -222,6 +222,12 @@ Controlled by `dataset.mode` in the adapter config:
 | `4` | ON-based clustering from FFN activation matrix |
 | `5` | ON-based clustering + loss-aware sampling |
 | `6` | ON-based clustering + variance sampling |
+| `7` | Loss bucketing (stratified by source task loss) |
+| `8` | KMeans on prompt embeddings + loss stratification |
+| `9` | KMeans on prompt embeddings + Farthest Point Sampling |
+| `10` | PCA (256-dim) + KMeans |
+
+For full baseline reproduction commands and experimental details, see **[BASELINES.md](BASELINES.md)**.
 
 ---
 

@@ -49,13 +49,15 @@ class DatasetBuilder(ABC):
         return train_data_filtered
     
     def get_train_indices(self, config, dataset):
-        mode = config.dataset.get('mode', 0) 
+        mode = config.dataset.get('mode', 0)
+        train_ratio = config.dataset.get('train_ratio', 2000)
+        seed = config.run.get('seed', 42)
         if mode == 0:
-            train_indices = range(config.dataset.get('train_ratio', 2000))
+            train_indices = range(train_ratio)
         elif mode == 1:
             train_indices = select_users_with_stratified_variance_sampling(
                 dataset=dataset,
-                num_users_to_select=config.dataset.get('train_ratio', 2000),
+                num_users_to_select=train_ratio,
                 num_groups=8,
                 weight_type="normal"
             )
@@ -63,7 +65,7 @@ class DatasetBuilder(ABC):
             train_indices = select_users_with_clustering_and_variance_sampling(
                 dataset=dataset,
                 embedding_path=config.model.soft_prompt_path,
-                num_users_to_select=config.dataset.get('train_ratio', 2000),
+                num_users_to_select=train_ratio,
                 num_clusters=15,
                 num_variance_groups=5,
                 min_users_per_cluster=50,
@@ -74,31 +76,67 @@ class DatasetBuilder(ABC):
             train_indices = select_users_with_clustering_and_variance_sampling(
                 dataset=dataset,
                 embedding_path=config.model.soft_prompt_path,
-                num_users_to_select=config.dataset.get('train_ratio', 2000),
+                num_users_to_select=train_ratio,
                 num_clusters=15,
                 num_variance_groups=5,
                 min_users_per_cluster=50,
-                random_state=config.run.get('kmeans_seed', config.run.get('seed',42)), 
+                random_state=config.run.get('kmeans_seed', seed),
                 weight_type="normal"
             )
         elif mode == 4:
             train_indices = ON_based_cluster(
                 embedding_path=config.model.get('ffn_matrix', None),
-                num_users_to_select=config.dataset.get('train_ratio', 2000),
+                num_users_to_select=train_ratio,
                 num_clusters=15,
             )
         elif mode == 5:
             train_indices = ON_based_cluster_and_loss_sampling(
                 embedding_path=config.model.get('ffn_matrix', None),
                 loss_file_path=config.model.get('loss_file', None),
-                num_users_to_select=config.dataset.get('train_ratio', 2000),
+                num_users_to_select=train_ratio,
             )
         elif mode == 6:
             train_indices = ON_based_cluster_and_variance_sampling(
                 dataset=dataset,
                 embedding_path=config.model.get('ffn_matrix', None),
-                num_users_to_select=config.dataset.get('train_ratio', 2000),
+                num_users_to_select=train_ratio,
             )
+        elif mode == 7:
+            train_indices = select_users_with_stratified_weighted_sampling(
+                loss_file_path=config.model.get('loss_file', None),
+                num_users_to_select=train_ratio,
+                num_groups=8,
+                weight_type="normal"
+            )
+        elif mode == 8:
+            train_indices = select_users_with_embedding_and_loss(
+                path=config.model.soft_prompt_path,
+                loss_file_path=config.model.get('loss_file', None),
+                num_users_to_select=train_ratio,
+                num_clusters=15,
+                num_loss_groups=5,
+                min_users_per_cluster=50,
+                random_state=seed,
+                weight_type="normal"
+            )
+        elif mode == 9:
+            train_indices = select_users_with_fps(
+                dataset=dataset,
+                embedding_path=config.model.soft_prompt_path,
+                num_users_to_select=train_ratio,
+                num_clusters=15,
+                random_state=seed
+            )
+        elif mode == 10:
+            train_indices = select_users_with_pca_kmeans(
+                embedding_path=config.model.soft_prompt_path,
+                num_users_to_select=train_ratio,
+                num_clusters=15,
+                n_components=256,
+                random_state=seed
+            )
+        else:
+            raise ValueError(f"Unknown mode: {mode}")
         return train_indices
 
 class SpDatasetRegistry:
